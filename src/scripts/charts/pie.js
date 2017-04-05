@@ -101,8 +101,8 @@
     radius = Math.min(chartRect.width() / 2, chartRect.height() / 2);
     // Calculate total of all series to get reference value or use total reference from optional options
     totalDataSum = options.total || data.normalized.series.reduce(function(previousValue, currentValue) {
-      return previousValue + currentValue;
-    }, 0);
+        return previousValue + currentValue;
+      }, 0);
 
     var donutWidth = Chartist.quantity(options.donutWidth);
     if (donutWidth.unit === '%') {
@@ -139,8 +139,8 @@
 
     // Check if there is only one non-zero value in the series array.
     var hasSingleValInSeries = data.raw.series.filter(function(val) {
-      return val.hasOwnProperty('value') ? val.value !== 0 : val !== 0;
-    }).length === 1;
+        return val.hasOwnProperty('value') ? val.value !== 0 : val !== 0;
+      }).length === 1;
 
     // Creating the series groups
     data.raw.series.forEach(function(series, index) {
@@ -224,9 +224,7 @@
 
       // If this is a donut, we add the stroke-width as style attribute
       if(options.donut && !options.donutSolid) {
-        pathElement.attr({
-          'style': 'stroke-width: ' + donutWidth.value + 'px'
-        });
+        pathElement._node.style.strokeWidth = donutWidth.value + 'px';
       }
 
       // Fire off draw event

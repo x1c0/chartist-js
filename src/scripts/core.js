@@ -191,9 +191,9 @@ var Chartist = {
    */
   Chartist.serialMap = function(arr, cb) {
     var result = [],
-        length = Math.max.apply(null, arr.map(function(e) {
-          return e.length;
-        }));
+      length = Math.max.apply(null, arr.map(function(e) {
+        return e.length;
+      }));
 
     Chartist.times(length).forEach(function(e, index) {
       var args = arr.map(function(e) {
@@ -315,9 +315,10 @@ var Chartist = {
     svg = new Chartist.Svg('svg').attr({
       width: width,
       height: height
-    }).addClass(className).attr({
-      style: 'width: ' + width + '; height: ' + height + ';'
-    });
+    }).addClass(className);
+
+    svg._node.style.width = width;
+    svg._node.style.height = height;
 
     // Add the DOM node to our container
     container.appendChild(svg._node);
@@ -550,9 +551,9 @@ var Chartist = {
     options = Chartist.extend({}, options, dimension ? options['axis' + dimension.toUpperCase()] : {});
 
     var highLow = {
-        high: options.high === undefined ? -Number.MAX_VALUE : +options.high,
-        low: options.low === undefined ? Number.MAX_VALUE : +options.low
-      };
+      high: options.high === undefined ? -Number.MAX_VALUE : +options.high,
+      low: options.low === undefined ? Number.MAX_VALUE : +options.low
+    };
     var findHigh = options.high === undefined;
     var findLow = options.low === undefined;
 
@@ -778,7 +779,7 @@ var Chartist = {
     function safeIncrement(value, increment) {
       // If increment is too small use *= (1+EPSILON) as a simple nextafter
       if (value === (value += increment)) {
-      	value *= (1 + (increment > 0 ? EPSILON : -EPSILON));
+        value *= (1 + (increment > 0 ? EPSILON : -EPSILON));
       }
       return value;
     }
@@ -787,10 +788,10 @@ var Chartist = {
     newMin = bounds.min;
     newMax = bounds.max;
     while (newMin + bounds.step <= bounds.low) {
-    	newMin = safeIncrement(newMin, bounds.step);
+      newMin = safeIncrement(newMin, bounds.step);
     }
     while (newMax - bounds.step >= bounds.high) {
-    	newMax = safeIncrement(newMax, -bounds.step);
+      newMax = safeIncrement(newMax, -bounds.step);
     }
     bounds.min = newMin;
     bounds.max = newMax;
@@ -929,18 +930,18 @@ var Chartist = {
    */
   Chartist.createGridBackground = function (gridGroup, chartRect, className, eventEmitter) {
     var gridBackground = gridGroup.elem('rect', {
-        x: chartRect.x1,
-        y: chartRect.y2,
-        width: chartRect.width(),
-        height: chartRect.height(),
-      }, className, true);
+      x: chartRect.x1,
+      y: chartRect.y2,
+      width: chartRect.width(),
+      height: chartRect.height(),
+    }, className, true);
 
-      // Event for grid background draw
-      eventEmitter.emit('draw', {
-        type: 'gridBackground',
-        group: gridGroup,
-        element: gridBackground
-      });
+    // Event for grid background draw
+    eventEmitter.emit('draw', {
+      type: 'gridBackground',
+      group: gridGroup,
+      element: gridBackground
+    });
   };
 
   /**
@@ -971,11 +972,13 @@ var Chartist = {
     if(useForeignObject) {
       // We need to set width and height explicitly to px as span will not expand with width and height being
       // 100% in all browsers
-      var content = '<span class="' + classes.join(' ') +
-      '" xmlns="' + Chartist.namespaces.xhtml + '" style="' +
-        axis.units.len + ': ' + Math.round(positionalData[axis.units.len]) + 'px; ' +
-        axis.counterUnits.len + ': ' + Math.round(positionalData[axis.counterUnits.len]) + 'px">' +
-        labels[index] + '</span>';
+
+      var content = document.createElement('span');
+      content.className = classes.join(' ');
+      content.setAttribute('xmlns', Chartist.namespaces.xhtml);
+      content.innerText = labels[index];
+      content.style[axis.units.len] = Math.round(positionalData[axis.units.len]) + 'px';
+      content.style[axis.counterUnits.len] = Math.round(positionalData[axis.counterUnits.len]) + 'px';
 
       labelElement = group.foreignObject(content, Chartist.extend({
         style: 'overflow: visible;'
@@ -1114,7 +1117,7 @@ var Chartist = {
     for(var i = 0; i < pathCoordinates.length; i += 2) {
       // If this value is a "hole" we set the hole flag
       if(Chartist.getMultiValue(valueData[i / 2].value) === undefined) {
-      // if(valueData[i / 2].value === undefined) {
+        // if(valueData[i / 2].value === undefined) {
         if(!options.fillHoles) {
           hole = true;
         }
